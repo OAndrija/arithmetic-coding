@@ -3,4 +3,6 @@ project(vaja1)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(vaja1 main.cpp)
+add_executable(vaja1 main.cpp
+        ArithmeticCoder.cpp
+        ArithmeticCoder.h)
