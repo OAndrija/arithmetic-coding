@@ -5,6 +5,7 @@
 #include "ArithmeticCoder.h"
 
 void ArithmeticCoder::compress(std::ifstream &input, std::ofstream &output) {
+    //Symbol frequency table
     std::array<Symbol, 256> table{};
     uint32_t cumulativeFrequency = 0;
 
@@ -23,6 +24,13 @@ void ArithmeticCoder::compress(std::ifstream &input, std::ofstream &output) {
 
     input.clear();
     input.seekg(0);
+
+    //Initialization
+    lowerBound = 0;
+    upperBound = (1ULL << (BITS - 1)) - 1;
+    secondQuarter = (upperBound + 1) / 2;
+    firstQuarter = secondQuarter / 2;
+    thirdQuarter = firstQuarter * 3;
 }
 
 void ArithmeticCoder::decompress(std::ifstream &input, std::ofstream &output) {

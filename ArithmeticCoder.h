@@ -11,6 +11,14 @@
 
 class ArithmeticCoder {
 private:
+    static constexpr int BITS = 32;
+
+    uint32_t lowerBound = 0;
+    uint32_t upperBound = 0;
+    uint32_t firstQuarter = 0;
+    uint32_t secondQuarter = 0;
+    uint32_t thirdQuarter = 0;
+
     struct Symbol {
         uint32_t frequency = 0;
         uint32_t low = 0;
