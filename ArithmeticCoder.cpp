@@ -1,11 +1,9 @@
-//
-// Created by andrija on 10/3/26.
-//
-
 #include "ArithmeticCoder.h"
 
+#include "BitWriter.h"
+
 void ArithmeticCoder::compress(std::ifstream &input, std::ofstream &output) {
-    //Symbol frequency table
+    //Frequency table
     std::array<Symbol, 256> table{};
     uint32_t cumulativeFrequency = 0;
 
@@ -22,6 +20,35 @@ void ArithmeticCoder::compress(std::ifstream &input, std::ofstream &output) {
 
     if (cumulativeFrequency == 0) return;
 
+    //Header
+
+    //Number of bits
+    output.put(static_cast<char>(BITS));
+
+    //Symbol count so decoder knows when to stop reading symbols
+    uint16_t symbolCount = 0;
+    for (const auto& symbol : table) {
+        if (symbol.frequency > 0) {
+            symbolCount++;
+        }
+    }
+
+    output.write(reinterpret_cast<const char*>(&symbolCount), sizeof(symbolCount));
+
+    //Symbols
+    for (int i = 0; i < 256; i++) {
+        if (table[i].frequency > 0) {
+            output.put(static_cast<char>(i));
+        }
+    }
+
+    //Frequencies
+    for (int i = 0; i < 256; i++) {
+        if (table[i].frequency > 0) {
+            output.write(reinterpret_cast<const char*>(&table[i].frequency), sizeof(uint32_t));
+        }
+    }
+
     input.clear();
     input.seekg(0);
 
@@ -34,6 +61,7 @@ void ArithmeticCoder::compress(std::ifstream &input, std::ofstream &output) {
     thirdQuarter = firstQuarter * 3;
 
     uint32_t E3Counter = 0;
+    BitWriter writer(output);
 
     while (input.get(byte)) {
         const Symbol& symbol = table[static_cast<unsigned char>(byte)];
@@ -44,18 +72,23 @@ void ArithmeticCoder::compress(std::ifstream &input, std::ofstream &output) {
 
         while (upperBound < secondQuarter || lowerBound >= secondQuarter) {
             if (upperBound < secondQuarter) {
-                //E1 -> Output 0, followed by E3Counter 1s
+                writer.writeBit(0);
+                for (uint32_t i = 0; i < E3Counter; i++) {
+                    writer.writeBit(1);
+                }
+                E3Counter = 0;
 
                 lowerBound = lowerBound * 2;
                 upperBound = upperBound * 2 + 1;
-                //Izhod = 0 + E3_counter * 1
-                E3Counter = 0;
             } else {
-                //E2 -> Output 1, followed by E3Counter 0s
+                writer.writeBit(1);
+                for (uint32_t i = 0; i < E3Counter; i++) {
+                    writer.writeBit(0);
+                }
+                E3Counter = 0;
+
                 lowerBound = 2 * (lowerBound - secondQuarter);
                 upperBound = 2 * (upperBound - secondQuarter) + 1;
-                //Izhod = 1 + E3_counter * 0;
-                E3Counter = 0;
             }
         }
 
@@ -67,10 +100,21 @@ void ArithmeticCoder::compress(std::ifstream &input, std::ofstream &output) {
     }
 
     if (lowerBound < firstQuarter) {
-        //IZhod: 01 + E3_counter * 1;
+        writer.writeBit(0);
+        writer.writeBit(1);
+        for (uint32_t i = 0; i < E3Counter; i++) {
+            writer.writeBit(1);
+        }
+        E3Counter = 0;
     } else {
-        //Izgod: 10 + E3_counter * 0;
+        writer.writeBit(1);
+        writer.writeBit(0);
+        for (uint32_t i = 0; i < E3Counter; i++) {
+            writer.writeBit(0);
+        }
+        E3Counter = 0;
     }
+    writer.flush();
 }
 
 void ArithmeticCoder::decompress(std::ifstream &input, std::ofstream &output) {
