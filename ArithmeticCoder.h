@@ -1,7 +1,3 @@
-//
-// Created by andrija on 10/3/26.
-//
-
 #ifndef VAJA1_ARITHMETICCODER_H
 #define VAJA1_ARITHMETICCODER_H
 
@@ -10,7 +6,6 @@
 #include <fstream>
 
 class ArithmeticCoder {
-private:
     static constexpr int BITS = 32;
 
     uint32_t lowerBound = 0;
