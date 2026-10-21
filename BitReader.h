@@ -1,3 +1,5 @@
+#ifndef VAJA1_BITREADER_H
+#define VAJA1_BITREADER_H
 #include <fstream>
 
 class BitReader {
@@ -19,8 +21,5 @@ public:
         return (buffer >> count) & 1;
     }
 };
-
-#ifndef VAJA1_BITREADER_H
-#define VAJA1_BITREADER_H
 
 #endif //VAJA1_BITREADER_H

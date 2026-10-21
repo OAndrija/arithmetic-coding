@@ -179,7 +179,7 @@ void ArithmeticCoder::decompress(std::ifstream &input, std::ofstream &output) {
     uint32_t decodedCount = 0;
 
     while (decodedCount < cumulativeFrequency) {
-        uint32_t step = (upperBound - lowerBound + 1) / cumulativeFrequency;    // E1
+        uint32_t step = (upperBound - lowerBound + 1) / cumulativeFrequency;    // Enacba 1
         uint32_t value = (area - lowerBound) / step;    // Decoded value
 
         // Find the symbol whose interval contains value

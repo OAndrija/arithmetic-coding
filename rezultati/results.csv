@@ -1,0 +1,5 @@
+file,original_bytes,compressed_bytes,compression_ratio,encode_ms,decode_ms
+alice30.txt,148545,84164,1.76495,13.7171,62.603
+assassin.wav,288849,149882,1.92718,24.6424,202.846
+lena.bmp,2.16925e+06,1.89028e+06,1.14758,261.231,1060.85
+lorem.txt,39605,20525,1.9296,2.12297,13.5832
