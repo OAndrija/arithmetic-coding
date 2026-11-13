@@ -131,7 +131,6 @@ void ArithmeticCoder::decompress(std::ifstream &input, std::ofstream &output) {
 
     // Read number of bits (1 byte)
     if (!input.get(bitNumber)) {
-        std::cerr << "Error reading bit number\n.";
         return;
     }
     const int bits = static_cast<unsigned char>(bitNumber);
